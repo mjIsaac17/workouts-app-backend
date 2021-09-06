@@ -19,4 +19,4 @@ const getConnection = async () => {
   }
 };
 
-module.exports = { getConnection };
+module.exports = { getConnection, sql };
