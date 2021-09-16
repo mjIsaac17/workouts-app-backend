@@ -14,6 +14,7 @@ app.use(express.static("public"));
 
 //Routes
 app.use("/api/user", require("./routes/user.routes"));
+app.use("/api/muscle", require("./routes/muscle.routes"));
 
 app.set("port", process.env.PORT || 3000);
 
