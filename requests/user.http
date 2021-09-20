@@ -2,13 +2,35 @@
 
 GET {{api}}
 ###
+
 POST {{api}}
 Content-Type: application/json
 
 {
-    "name": "Salma",
+    "email": "pedor@gmail.com",
+    "password": "741852"
+}
+
+
+### For admin module
+POST {{api}}/new
+Content-Type: application/json
+
+{
+    "name": "Pedro",
     "lastname": "Torres",
-    "email": "salma4@gmail.com",
-    "password": "951753",
+    "email": "pedor@gmail.com",
+    "password": "741852",
     "role_id": 2
+}
+
+###
+POST {{api}}/register
+Content-Type: application/json
+
+{
+    "name": "Batman",
+    "lastname": "Parker",
+    "email": "batker8@gmail.com",
+    "password": "123456"
 }
