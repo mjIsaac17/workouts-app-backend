@@ -4,8 +4,8 @@ const { queries } = require("../db/queries");
 const getMuscles = async (req, res) => {
   try {
     const pool = await getConnection();
-    const result = await pool.request().query(queries.getMusclesData);
-    res.json(result.recordset);
+    const { recordset } = await pool.request().query(queries.getMusclesData);
+    res.json(recordset);
   } catch (error) {
     console.log(error);
     res.status(500).json("An error ocurred when trying to get the data");

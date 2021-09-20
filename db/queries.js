@@ -5,6 +5,9 @@ const queries = {
 
   //Muscle
   getMusclesData: "SELECT * FROM tblMuscle",
+
+  //Exercise
+  getExercisesById: "usp_Get_ExercisesByMuscleId @id",
 };
 
 module.exports = { queries };
