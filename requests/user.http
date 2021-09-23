@@ -2,26 +2,24 @@
 
 GET {{api}}
 ###
-
 POST {{api}}
 Content-Type: application/json
 
 {
-    "email": "pedor@gmail.com",
-    "password": "741852"
+    "email": "isaac@gmail.com",
+    "password": "123456"
 }
-
 
 ### For admin module
 POST {{api}}/new
 Content-Type: application/json
 
 {
-    "name": "Pedro",
-    "lastname": "Torres",
-    "email": "pedor@gmail.com",
-    "password": "741852",
-    "role_id": 2
+    "name": "Isaac",
+    "lastname": "Montes",
+    "email": "isaac@gmail.com",
+    "password": "123456",
+    "role_id": 1
 }
 
 ###
