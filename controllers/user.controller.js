@@ -40,6 +40,14 @@ const loginUser = async (req, res) => {
   }
 };
 
+const renewToken = async (req, res) => {
+  const { uid, name } = req;
+
+  const token = await generateJWT(uid, name);
+
+  res.json({ uid, name, token });
+};
+
 const getUsers = async (req, res) => {
   try {
     const pool = await getConnection();
@@ -128,6 +136,7 @@ const registerUser = async (req, res) => {
 
 module.exports = {
   loginUser,
+  renewToken,
   getUsers,
   addUser,
   registerUser,
