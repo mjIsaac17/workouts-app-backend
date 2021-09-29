@@ -23,21 +23,23 @@ const getExercisesById = async (req, res) => {
  */
 const addExercise = async (req, res) => {
   try {
-    const { name, description, image_name, muscleId } = req.body;
+    const { name, description, muscleId } = req.body;
     const uid = req.uid;
-    // //Encrypt password
-    // const salt = bcrypt.genSaltSync();
-    // const encryptedPassword = bcrypt.hashSync(password, salt);
+    const image = req.files.image;
     const pool = await getConnection();
     const { recordset } = await pool
       .request()
       .input("name", sql.VarChar, name)
       .input("description", sql.VarChar, description)
-      .input("image_name", sql.VarChar, image_name)
+      .input("image_name", sql.VarChar, image.name)
       .input("muscleId", sql.Int, muscleId)
       .input("userId", sql.Int, uid)
       .query(queries.addExercise);
-    res.status(recordset[0].status).json(recordset);
+
+    if (recordset[0].status == 201)
+      image.mv(`../frontend-workouts-app/public/img/exercises/${image.name}`);
+
+    res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
     res.status(500).json("An error ocurred when inserting a new user");

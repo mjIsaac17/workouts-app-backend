@@ -26,7 +26,7 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    const token = await generateJWT(user.id, `${user.name} ${user.lastname}`);
+    const token = await generateJWT(user.id, user.name);
 
     delete user.password;
     user.token = token;

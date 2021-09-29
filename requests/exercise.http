@@ -1,5 +1,5 @@
 @api = http://localhost:4000/api/exercise
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsIm5hbWUiOiJJc2FhYyBNb250ZXMiLCJpYXQiOjE2MzI0MzEyOTMsImV4cCI6MTYzMjQzODQ5M30.IWa2kl7sj1aGsh8oF178GXWBG-IQR7pw41ItmpDAB70
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsIm5hbWUiOiJJc2FhYyIsImlhdCI6MTYzMjg1MjM4MiwiZXhwIjoxNjMyODU5NTgyfQ.80IeGarHsz_R9KnGLyoShoiUiFJpULgoQBcZvAHEbcs
 
 GET {{api}}/1
 x-token: {{token}}
@@ -9,8 +9,8 @@ x-token: {{token}}
 Content-Type: application/json
 
 {
-    "name": "Barbell rows",
-    "description": "This is one of the best barbell exercises to train your back",
-    "image_name": "barbellRows.jpg",
-    "muscleId": 1
+    "name": "Barbell squats",
+    "description": "Best leg exercise",
+    "image_name": "barbellSquats.jpg",
+    "muscleId": 2
 }

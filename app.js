@@ -1,4 +1,5 @@
 const express = require("express");
+const fileUpload = require("express-fileupload");
 const cors = require("cors");
 
 const dotenv = require("dotenv");
@@ -9,6 +10,8 @@ const app = express();
 //Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(fileUpload());
+//app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
 
