@@ -6,7 +6,6 @@ const { generateJWT } = require("../helpers/jwt");
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("email", email);
     const pool = await getConnection();
     const { recordset } = await pool
       .request()
@@ -19,6 +18,7 @@ const loginUser = async (req, res) => {
     }
 
     const [user] = recordset;
+    const { id, name, role_id } = user;
 
     //Validate password
     const validPassword = bcrypt.compareSync(password, user.password);
@@ -26,12 +26,9 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    const token = await generateJWT(user.id, user.name);
+    const token = await generateJWT(id, name, role_id);
 
-    delete user.password;
-    user.token = token;
-
-    res.json(user);
+    res.json({ id, name, role_id, token });
   } catch (error) {
     console.log(error);
     res
@@ -41,11 +38,12 @@ const loginUser = async (req, res) => {
 };
 
 const renewToken = async (req, res) => {
-  const { uid, name } = req;
+  const { uid, name, role_id } = req;
+  //console.log("req role", role_id);
 
-  const token = await generateJWT(uid, name);
+  const token = await generateJWT(uid, name, role_id);
 
-  res.json({ uid, name, token });
+  res.json({ uid, name, role_id, token });
 };
 
 const getUsers = async (req, res) => {

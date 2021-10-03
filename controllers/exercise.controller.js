@@ -52,7 +52,7 @@ const updateExercise = async (req, res) => {
     const { id } = req.params;
     const { name, description, image_name, muscleId } = req.body;
     const uid = req.uid;
-
+    console.log(req.body);
     const pool = await getConnection();
     const { recordset } = await pool
       .request()
@@ -75,8 +75,8 @@ const updateExercise = async (req, res) => {
 
         const imageFile = req.files;
         if (imageFile)
-          imageFile.image.mv(
-            `../frontend-workouts-app/public/img/exercises/${imageFile.image.name}`
+          imageFile.newImage.mv(
+            `../frontend-workouts-app/public/img/exercises/${imageFile.newImage.name}`
           );
       } catch (error) {
         console.log(error);
