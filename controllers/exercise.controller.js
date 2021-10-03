@@ -63,8 +63,6 @@ const updateExercise = async (req, res) => {
       .input("muscleId", sql.Int, muscleId)
       .input("userId", sql.Int, uid)
       .query(queries.updateExercise);
-    console.log(req.files);
-    console.log(recordset[0]);
 
     if (recordset[0].status == 200) {
       try {
@@ -89,8 +87,38 @@ const updateExercise = async (req, res) => {
   }
 };
 
+const deleteExercise = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const uid = req.uid;
+    const pool = await getConnection();
+    const { recordset } = await pool
+      .request()
+      .input("exerciseId", sql.Int, id)
+      .input("userId", sql.Int, uid)
+      .query(queries.deleteExercise);
+
+    if (recordset[0].status == 200) {
+      try {
+        //Delete the exercise image if it is not being in used by another exercise
+        if (recordset[0].deleteImage)
+          fs.unlinkSync(
+            `../frontend-workouts-app/public/img/exercises/${recordset[0].imageToDelete}`
+          );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    res.status(recordset[0].status).json(recordset[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("An error ocurred when deleting an exercise");
+  }
+};
+
 module.exports = {
   getExercisesById,
   addExercise,
   updateExercise,
+  deleteExercise,
 };

@@ -3,6 +3,7 @@ const {
   getExercisesById,
   addExercise,
   updateExercise,
+  deleteExercise,
 } = require("../controllers/exercise.controller");
 const { validateJWT } = require("../middlewares/validateJWT");
 
@@ -14,5 +15,6 @@ router.use(validateJWT);
 router.get("/:id", getExercisesById);
 router.post("/", addExercise);
 router.put("/:id", updateExercise);
+router.delete("/:id", deleteExercise);
 
 module.exports = router;

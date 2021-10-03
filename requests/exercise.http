@@ -1,5 +1,5 @@
 @api = http://localhost:4000/api/exercise
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsIm5hbWUiOiJJc2FhYyIsImlhdCI6MTYzMzEwMjY1NiwiZXhwIjoxNjMzMTA5ODU2fQ.S2o6o_r3TdYVuwXzJXF3uhfwKJTmbT_NJYsCGGS4-FE
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsIm5hbWUiOiJJc2FhYyIsInJvbGVfaWQiOjEsImlhdCI6MTYzMzI3ODA1OSwiZXhwIjoxNjMzMjg1MjU5fQ.xPlboqIwhpNVmDG3Xcm1JUE202jrXh_LWLeNcM2R1BI
 
 GET {{api}}/1
 x-token: {{token}}
@@ -16,13 +16,5 @@ Content-Type: application/json
 }
 
 ###
-PUT {{api}}/15
+DELETE  {{api}}/11
 x-token: {{token}}
-Content-Type: application/json
-
-{
-    "name": "Barbell squats2",
-    "description": "Best leg exercise",
-    "image_name": "barbellSquats.jpg",
-    "muscleId": 2
-}
