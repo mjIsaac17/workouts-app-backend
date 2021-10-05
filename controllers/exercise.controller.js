@@ -32,7 +32,7 @@ const addExercise = async (req, res) => {
       .request()
       .input("name", sql.VarChar, name)
       .input("description", sql.VarChar, description)
-      .input("image_name", sql.VarChar, image.name)
+      .input("imageName", sql.VarChar, image.name)
       .input("muscleId", sql.Int, muscleId)
       .input("userId", sql.Int, uid)
       .query(queries.addExercise);
@@ -50,32 +50,32 @@ const addExercise = async (req, res) => {
 const updateExercise = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, image_name, muscleId } = req.body;
+    const { name, description, originalImageName, imageName, muscleId } =
+      req.body;
     const uid = req.uid;
-    console.log(req.body);
     const pool = await getConnection();
     const { recordset } = await pool
       .request()
       .input("id", sql.Int, id)
       .input("name", sql.VarChar, name)
       .input("description", sql.VarChar, description)
-      .input("image_name", sql.VarChar, image_name)
+      .input("imageName", sql.VarChar, imageName) //contains either the original image name or the new one
       .input("muscleId", sql.Int, muscleId)
       .input("userId", sql.Int, uid)
       .query(queries.updateExercise);
 
     if (recordset[0].status == 200) {
       try {
-        if (recordset[0].deleteImage)
-          fs.unlinkSync(
-            `../frontend-workouts-app/public/img/exercises/${recordset[0].imageToDelete}`
-          );
-
+        //If there is a file image, delete the previous one to move the new one
         const imageFile = req.files;
-        if (imageFile)
-          imageFile.newImage.mv(
-            `../frontend-workouts-app/public/img/exercises/${imageFile.newImage.name}`
+        if (imageFile) {
+          fs.unlinkSync(
+            `../frontend-workouts-app/public/img/exercises/${originalImageName}`
           );
+          imageFile.newImage.mv(
+            `../frontend-workouts-app/public/img/exercises/${imageName}`
+          );
+        }
       } catch (error) {
         console.log(error);
       }
@@ -90,6 +90,7 @@ const updateExercise = async (req, res) => {
 const deleteExercise = async (req, res) => {
   try {
     const { id } = req.params;
+    const { imageName } = req.body;
     const uid = req.uid;
     const pool = await getConnection();
     const { recordset } = await pool
@@ -100,11 +101,9 @@ const deleteExercise = async (req, res) => {
 
     if (recordset[0].status == 200) {
       try {
-        //Delete the exercise image if it is not being in used by another exercise
-        if (recordset[0].deleteImage)
-          fs.unlinkSync(
-            `../frontend-workouts-app/public/img/exercises/${recordset[0].imageToDelete}`
-          );
+        fs.unlinkSync(
+          `../frontend-workouts-app/public/img/exercises/${imageName}`
+        );
       } catch (error) {
         console.log(error);
       }

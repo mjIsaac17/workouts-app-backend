@@ -6,13 +6,16 @@ const queries = {
 
   //Muscle
   getMusclesData: "SELECT * FROM tblMuscle",
+  addMuscle: "usp_Add_Muscle @name, @imageName, @userId",
+  updateMuscle: "usp_Update_Muscle @muscleId, @name, @imageName, @userId",
+  deleteMuscle: "usp_Delete_Muscle @muscleId, @userId, @deleteExercises",
 
   //Exercise
   getExercisesById: "usp_Get_ExercisesByMuscleId @id",
   addExercise:
-    "usp_Add_Exercise @name, @description, @image_name, @muscleId, @userId",
+    "usp_Add_Exercise @name, @description, @imageName, @muscleId, @userId",
   updateExercise:
-    "usp_Update_Exercise @id, @name, @description, @image_name, @muscleId, @userId",
+    "usp_Update_Exercise @id, @name, @description, @imageName, @muscleId, @userId",
   deleteExercise: "usp_Delete_Exercise @exerciseId, @userId",
 };
 
