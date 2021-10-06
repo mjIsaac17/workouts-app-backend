@@ -1,3 +1,4 @@
+const fs = require("fs");
 const { getConnection, sql } = require("../db/connection");
 const { queries } = require("../db/queries");
 
