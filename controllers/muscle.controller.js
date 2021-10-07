@@ -9,7 +9,9 @@ const getMuscles = async (req, res) => {
     res.json(recordset);
   } catch (error) {
     console.log(error);
-    res.status(500).json("An error ocurred when trying to get the data");
+    res
+      .status(500)
+      .json({ error: "An error ocurred when trying to get the data" });
   }
 };
 
@@ -19,24 +21,27 @@ const getMuscles = async (req, res) => {
  */
 const addMuscle = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, imageName } = req.body;
     const uid = req.uid;
-    const image = req.files.image;
     const pool = await getConnection();
     const { recordset } = await pool
       .request()
       .input("name", sql.VarChar, name)
-      .input("imageName", sql.VarChar, image.name)
+      .input("imageName", sql.VarChar, imageName)
       .input("userId", sql.Int, uid)
       .query(queries.addMuscle);
 
-    if (recordset[0].status == 201)
-      image.mv(`../frontend-workouts-app/public/img/muscles/${image.name}`);
+    if (recordset[0].status == 201) {
+      const image = req.files.image;
+      image.mv(`../frontend-workouts-app/public/img/muscles/${imageName}`);
+    }
 
     res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
-    res.status(500).json("An error ocurred when inserting a new muscle");
+    res
+      .status(500)
+      .json({ error: "An error ocurred when inserting a new muscle" });
   }
 };
 
@@ -73,7 +78,7 @@ const updateMuscle = async (req, res) => {
     res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
-    res.status(500).json("An error ocurred when updating a muscle");
+    res.status(500).json({ error: "An error ocurred when updating a muscle" });
   }
 };
 
@@ -102,7 +107,7 @@ const deleteMuscle = async (req, res) => {
     res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
-    res.status(500).json("An error ocurred when deleting a muscle");
+    res.status(500).json({ error: "An error ocurred when deleting a muscle" });
   }
 };
 

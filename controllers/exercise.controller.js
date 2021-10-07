@@ -13,7 +13,9 @@ const getExercisesById = async (req, res) => {
     res.json(recordset);
   } catch (error) {
     console.log(error);
-    res.status(500).json("An error ocurred when trying to get the data");
+    res
+      .status(500)
+      .json({ error: "An error ocurred when trying to get the data" });
   }
 };
 
@@ -43,7 +45,9 @@ const addExercise = async (req, res) => {
     res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
-    res.status(500).json("An error ocurred when inserting a new exercise");
+    res
+      .status(500)
+      .json({ error: "An error ocurred when inserting a new exercise" });
   }
 };
 
@@ -83,7 +87,9 @@ const updateExercise = async (req, res) => {
     res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
-    res.status(500).json("An error ocurred when updating an exercise");
+    res
+      .status(500)
+      .json({ error: "An error ocurred when updating an exercise" });
   }
 };
 
@@ -111,7 +117,9 @@ const deleteExercise = async (req, res) => {
     res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
-    res.status(500).json("An error ocurred when deleting an exercise");
+    res
+      .status(500)
+      .json({ error: "An error ocurred when deleting an exercise" });
   }
 };
 
