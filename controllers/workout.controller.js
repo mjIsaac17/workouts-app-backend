@@ -37,11 +37,12 @@ const addWorkout = async (req, res) => {
       .input("exerciseIds", sql.VarChar, exerciseIds)
       .query(queries.addWorkout);
 
-    if (recordset[0].status == 201)
+    if (recordset[0].status == 201) {
       if (imageFile)
         imageFile.image.mv(
           `../frontend-workouts-app/public/img/workouts/${imageFile.image.name}`
         );
+    } else console.log(recordset);
 
     res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
@@ -74,4 +75,56 @@ const getWorkoutExercises = async (req, res) => {
   }
 };
 
-module.exports = { addWorkout, getWorkoutsByUserId, getWorkoutExercises };
+const updateWorkout = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, exerciseIds, imageName } = req.body;
+    console.log(typeof exerciseIds);
+    let imageFile = req.files;
+    const pool = await getConnection();
+    const { recordset } = await pool
+      .request()
+      .input("workoutId", sql.Int, id)
+      .input("name", sql.VarChar, name)
+      .input("description", sql.VarChar, description)
+      .input(
+        "imageName",
+        sql.VarChar,
+        imageFile ? imageFile.image.name : imageName
+      )
+      .input(
+        "exerciseIds",
+        sql.VarChar,
+        exerciseIds === "null" ? null : exerciseIds
+      )
+      .query(queries.updateWorkout);
+
+    if (recordset[0].status == 200) {
+      if (imageFile) {
+        if (imageName)
+          //Delete previous image (if exists)
+          fs.unlinkSync(
+            `../frontend-workouts-app/public/img/workouts/${imageName}`
+          );
+        //Add new image
+        imageFile.image.mv(
+          `../frontend-workouts-app/public/img/workouts/${imageFile.image.name}`
+        );
+      }
+    } else console.log(recordset);
+
+    res.status(recordset[0].status).json(recordset[0]);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "An error ocurred when updating the workout" });
+  }
+};
+
+module.exports = {
+  addWorkout,
+  getWorkoutsByUserId,
+  getWorkoutExercises,
+  updateWorkout,
+};

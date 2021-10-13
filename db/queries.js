@@ -23,6 +23,8 @@ const queries = {
   getWorkoutExercises: "usp_Get_WorkoutExercisesByName @workoutName, @userId",
   addWorkout:
     "usp_Add_Workout @name, @description, @imageName, @userId, @exerciseIds",
+  updateWorkout:
+    "usp_Update_Workout @workoutId, @name, @description, @imageName, @exerciseIds",
 };
 
 module.exports = { queries };
