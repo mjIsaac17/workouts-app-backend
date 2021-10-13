@@ -17,6 +17,12 @@ const queries = {
   updateExercise:
     "usp_Update_Exercise @id, @name, @description, @imageName, @muscleId, @userId",
   deleteExercise: "usp_Delete_Exercise @exerciseId, @userId",
+
+  //Workout
+  getWorkoutsByUserId: "usp_Get_WorkoutsByUserId @userId",
+  getWorkoutExercises: "usp_Get_WorkoutExercisesByName @workoutName, @userId",
+  addWorkout:
+    "usp_Add_Workout @name, @description, @imageName, @userId, @exerciseIds",
 };
 
 module.exports = { queries };

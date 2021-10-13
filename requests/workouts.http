@@ -1,0 +1,10 @@
+@api = http://localhost:4000/api/workout
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsIm5hbWUiOiJJc2FhYyIsInJvbGVfaWQiOjEsImlhdCI6MTYzMzk4NDk1MywiZXhwIjoxNjMzOTkyMTUzfQ.XQaQrhq6mIqP73RexKcUeQX65mt_aonsoocH1C_6BsI
+
+GET {{api}}/my-workouts
+x-token: {{token}}
+###
+
+GET {{api}}/my-workouts/Legs
+x-token: {{token}}
+###
