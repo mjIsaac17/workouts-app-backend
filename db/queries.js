@@ -25,6 +25,7 @@ const queries = {
     "usp_Add_Workout @name, @description, @imageName, @userId, @exerciseIds",
   updateWorkout:
     "usp_Update_Workout @workoutId, @name, @description, @imageName, @exerciseIds",
+  deleteWorkout: "usp_Delete_Workout @workoutId",
 };
 
 module.exports = { queries };

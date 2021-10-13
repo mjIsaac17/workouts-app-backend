@@ -4,6 +4,7 @@ const {
   getWorkoutsByUserId,
   getWorkoutExercises,
   updateWorkout,
+  deleteWorkout,
 } = require("../controllers/workout.controller");
 
 const { validateJWT } = require("../middlewares/validateJWT");
@@ -17,5 +18,6 @@ router.get("/my-workouts", getWorkoutsByUserId);
 router.get("/my-workouts/:workoutName", getWorkoutExercises);
 router.post("/", addWorkout);
 router.put("/:id", updateWorkout);
+router.delete("/:id", deleteWorkout);
 
 module.exports = router;

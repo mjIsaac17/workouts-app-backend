@@ -79,7 +79,6 @@ const updateWorkout = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description, exerciseIds, imageName } = req.body;
-    console.log(typeof exerciseIds);
     let imageFile = req.files;
     const pool = await getConnection();
     const { recordset } = await pool
@@ -122,9 +121,37 @@ const updateWorkout = async (req, res) => {
   }
 };
 
+const deleteWorkout = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { imageName } = req.body;
+    const pool = await getConnection();
+    const { recordset } = await pool
+      .request()
+      .input("workoutId", sql.Int, id)
+      .query(queries.deleteWorkout);
+
+    if (recordset[0].status == 200) {
+      if (imageName)
+        //Delete previous image (if exists)
+        fs.unlinkSync(
+          `../frontend-workouts-app/public/img/workouts/${imageName}`
+        );
+    } else console.log(recordset);
+
+    res.status(recordset[0].status).json(recordset[0]);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "An error ocurred when deleting the workout" });
+  }
+};
+
 module.exports = {
   addWorkout,
   getWorkoutsByUserId,
   getWorkoutExercises,
   updateWorkout,
+  deleteWorkout,
 };
