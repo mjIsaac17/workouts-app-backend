@@ -80,10 +80,10 @@ const addUser = async (req, res) => {
       .input("image", sql.VarChar, image)
       .input("role_id", sql.Int, role_id)
       .query(queries.addNewUser);
-    res.status(recordset[0].status).json(recordset);
+    res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
-    res.status(500).json("An error ocurred when inserting a new user");
+    res.status(500).json("An error ocurred when adding a new user");
   }
 };
 

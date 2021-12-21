@@ -42,7 +42,7 @@ const addWorkout = async (req, res) => {
         imageFile.image.mv(
           `../frontend-workouts-app/public/img/workouts/${imageFile.image.name}`
         );
-    } else console.log(recordset);
+    } else console.log(recordset[0]);
 
     res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
@@ -110,7 +110,7 @@ const updateWorkout = async (req, res) => {
           `../frontend-workouts-app/public/img/workouts/${imageFile.image.name}`
         );
       }
-    } else console.log(recordset);
+    } else console.log(recordset[0]);
 
     res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
