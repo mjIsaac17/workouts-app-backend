@@ -87,6 +87,43 @@ const addUser = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, lastname, email, role_id } = req.body;
+
+    const pool = await getConnection();
+    const { recordset } = await pool
+      .request()
+      .input("id", sql.Int, id)
+      .input("name", sql.VarChar, name)
+      .input("lastname", sql.VarChar, lastname)
+      .input("email", sql.VarChar, email)
+      .input("role_id", sql.Int, role_id)
+      .query(queries.updateUser);
+    res.status(recordset[0].status).json(recordset[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("An error ocurred when updating the user");
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const pool = await getConnection();
+    const { recordset } = await pool
+      .request()
+      .input("userId", sql.Int, id)
+      .query(queries.deleteUser);
+    res.status(recordset[0].status).json(recordset[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("An error ocurred when deleting the user");
+  }
+};
+
 /** SQL server returns:
  * status: (201, 404)
  * error: "Invalid email" or result: "User added"
@@ -152,4 +189,6 @@ module.exports = {
   getRoles,
   addUser,
   registerUser,
+  updateUser,
+  deleteUser,
 };
