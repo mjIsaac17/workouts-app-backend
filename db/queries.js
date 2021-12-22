@@ -6,6 +6,7 @@ const queries = {
   getRoles: "usp_Get_Roles",
   updateUser: "usp_Update_User @id, @name, @lastname, @email, @role_id",
   deleteUser: "usp_Delete_User @userId",
+  getUsers: "usp_Get_UsersDetails @roleId, @currentUserId",
 
   //Muscle
   getMusclesData: "SELECT * FROM tblMuscle",

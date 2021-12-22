@@ -48,8 +48,13 @@ const renewToken = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
+    const { uid } = req;
     const pool = await getConnection();
-    const result = await pool.request().query("usp_Get_UsersDetails");
+    const result = await pool
+      .request()
+      .input("roleId", sql.Int, 0) //0 = no filter by role
+      .input("currentUserId", sql.Int, uid)
+      .query(queries.getUsers);
     res.json(result.recordset);
   } catch (error) {
     console.log(error);
