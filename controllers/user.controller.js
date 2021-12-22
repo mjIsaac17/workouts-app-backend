@@ -132,10 +132,24 @@ const registerUser = async (req, res) => {
   }
 };
 
+const getRoles = async (req, res) => {
+  try {
+    const pool = await getConnection();
+    const result = await pool.request().query(queries.getRoles);
+    res.json(result.recordset);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "An error ocurred when getting the users from the db" });
+  }
+};
+
 module.exports = {
   loginUser,
   renewToken,
   getUsers,
+  getRoles,
   addUser,
   registerUser,
 };

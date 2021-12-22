@@ -3,6 +3,7 @@ const queries = {
   addNewUser:
     "usp_Insert_User @name, @lastname, @email, @password, @image, @role_id",
   userLogin: "usp_Get_UserByEmail @email",
+  getRoles: "usp_Get_Roles",
 
   //Muscle
   getMusclesData: "SELECT * FROM tblMuscle",
