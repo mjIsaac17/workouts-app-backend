@@ -17,9 +17,9 @@ const queries = {
   //Exercise
   getExercisesById: "usp_Get_ExercisesByMuscleId @id",
   addExercise:
-    "usp_Add_Exercise @name, @description, @imageName, @muscleId, @userId",
+    "usp_Add_Exercise @name, @description, @imageName, @imageUrl, @muscleId, @userId",
   updateExercise:
-    "usp_Update_Exercise @id, @name, @description, @imageName, @muscleId, @userId",
+    "usp_Update_Exercise @id, @name, @description, @imageName, @imageUrl, @muscleId, @userId",
   deleteExercise: "usp_Delete_Exercise @exerciseId, @userId",
 
   //Workout

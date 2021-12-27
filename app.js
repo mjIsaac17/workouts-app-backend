@@ -10,7 +10,12 @@ const app = express();
 //Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(fileUpload());
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tempFile/",
+  })
+);
 //app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
