@@ -54,7 +54,7 @@ const addExercise = async (req, res) => {
 
       if (recordset[0].status !== 201) {
         //Delete image because the exercise was not inserted in the database
-        const deleteImageResult = deleteImage(
+        const deleteImageResult = await deleteImage(
           imageResult.imageUrl,
           uploadFolders.exercises
         );
@@ -115,7 +115,7 @@ const updateExercise = async (req, res) => {
       //Check if the exercise was updated
       if (recordset[0].status === 200) {
         // The exercise was updated successfully, we can proceed to delete the original image
-        const deleteImageResult = deleteImage(
+        const deleteImageResult = await deleteImage(
           imageUrl,
           uploadFolders.exercises
         );
@@ -126,7 +126,7 @@ const updateExercise = async (req, res) => {
           .json({ imageUrl: newImageUrl, imageName: newImageName });
       } else {
         // Delete the new image uploaded because the exercise was not updated in the database
-        const deleteImageResult = deleteImage(
+        const deleteImageResult = await deleteImage(
           newImageUrl,
           uploadFolders.exercises
         );
@@ -149,7 +149,7 @@ const updateExercise = async (req, res) => {
 const deleteExercise = async (req, res) => {
   try {
     const { id } = req.params;
-    const { imageName } = req.body;
+    const { imageUrl } = req.body;
     const uid = req.uid;
     const pool = await getConnection();
     const { recordset } = await pool
@@ -158,14 +158,13 @@ const deleteExercise = async (req, res) => {
       .input("userId", sql.Int, uid)
       .query(queries.deleteExercise);
 
-    if (recordset[0].status == 200) {
-      try {
-        fs.unlinkSync(
-          `../frontend-workouts-app/public/img/exercises/${imageName}`
-        );
-      } catch (error) {
-        console.log(error);
-      }
+    if (recordset[0].status === 200) {
+      const deleteImageResult = await deleteImage(
+        imageUrl,
+        uploadFolders.exercises
+      );
+      if (deleteImageResult.status !== 200)
+        console.log(deleteImageResult.error);
     }
     res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {

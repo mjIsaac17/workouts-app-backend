@@ -32,12 +32,12 @@ const uploadImage = async (image, uploadFolder = "") => {
   }
 };
 
-const deleteImage = (imageUrl, folder = "") => {
+const deleteImage = async (imageUrl, folder = "") => {
   try {
     const pathArr = imageUrl.split("/"); // https://res.cloudinary.com/dajuhzxdz/image/upload/v1629693928/fqae4hvyrmrqmpa4drpy.jpg
     const imageName = pathArr[pathArr.length - 1]; // fqae4hvyrmrqmpa4drpy.jpg
     const [imageId] = imageName.split("."); // fqae4hvyrmrqmpa4drpy
-    cloudinary.uploader.destroy(`WorkoutsApp/${folder}/${imageId}`);
+    await cloudinary.uploader.destroy(`WorkoutsApp/${folder}/${imageId}`);
     return { status: 200 };
   } catch (error) {
     console.log(error);
