@@ -64,7 +64,11 @@ const addExercise = async (req, res) => {
 
       return res
         .status(recordset[0].status)
-        .json({ ...recordset[0], imageUrl: imageResult.imageUrl });
+        .json({
+          ...recordset[0],
+          imageUrl: imageResult.imageUrl,
+          imageName: req.files.image.name,
+        });
     }
     return res.status(imageResult.status).json({ error: imageResult.error });
   } catch (error) {
@@ -166,10 +170,10 @@ const deleteExercise = async (req, res) => {
       if (deleteImageResult.status !== 200)
         console.log(deleteImageResult.error);
     }
-    res.status(recordset[0].status).json(recordset[0]);
+    return res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
-    res
+    return res
       .status(500)
       .json({ error: "An error ocurred when deleting an exercise" });
   }

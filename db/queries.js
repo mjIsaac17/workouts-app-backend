@@ -10,9 +10,9 @@ const queries = {
 
   //Muscle
   getMusclesData: "SELECT * FROM tblMuscle",
-  addMuscle: "usp_Add_Muscle @name, @imageName, @userId",
-  updateMuscle: "usp_Update_Muscle @muscleId, @name, @imageName, @userId",
-  deleteMuscle: "usp_Delete_Muscle @muscleId, @userId, @deleteExercises",
+  addMuscle: "usp_Add_Muscle @name, @imageName, @imageUrl, @userId",
+  updateMuscle: "usp_Update_Muscle @id, @name, @imageName, @imageUrl, @userId",
+  deleteMuscle: "usp_Delete_Muscle @id, @userId, @deleteExercises",
 
   //Exercise
   getExercisesById: "usp_Get_ExercisesByMuscleId @id",
