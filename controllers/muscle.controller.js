@@ -98,7 +98,7 @@ const updateMuscle = async (req, res) => {
       .query(queries.updateMuscle);
 
     if (image) {
-      //Check if the exercise was updated
+      //Check if the muscle was updated
       if (recordset[0].status === 200) {
         // The exercise was updated successfully, we can proceed to delete the original image
         const deleteImageResult = await deleteImage(

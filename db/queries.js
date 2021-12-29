@@ -26,9 +26,9 @@ const queries = {
   getWorkoutsByUserId: "usp_Get_WorkoutsByUserId @userId",
   getWorkoutExercises: "usp_Get_WorkoutExercisesByName @workoutName, @userId",
   addWorkout:
-    "usp_Add_Workout @name, @description, @imageName, @userId, @exerciseIds",
+    "usp_Add_Workout @name, @description, @imageName, @imageUrl, @userId, @exerciseIds",
   updateWorkout:
-    "usp_Update_Workout @workoutId, @name, @description, @imageName, @exerciseIds",
+    "usp_Update_Workout @workoutId, @name, @description, @imageName, @imageUrl, @exerciseIds",
   deleteWorkout: "usp_Delete_Workout @workoutId",
 };
 

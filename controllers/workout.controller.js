@@ -1,6 +1,11 @@
 const { getConnection, sql } = require("../db/connection");
 const { queries } = require("../db/queries");
 const fs = require("fs");
+const {
+  uploadImage,
+  uploadFolders,
+  deleteImage,
+} = require("../helpers/imageManager");
 
 const getWorkoutsByUserId = async (req, res) => {
   try {
@@ -23,31 +28,50 @@ const getWorkoutsByUserId = async (req, res) => {
 };
 
 const addWorkout = async (req, res) => {
+  let addImageResult = {
+    imageUrl: null,
+    imageName: null,
+  };
+
   try {
+    const image = req.files?.image;
+    if (image) {
+      addImageResult = await uploadImage(image, uploadFolders.workouts);
+    }
+
     const { name, description, exerciseIds } = req.body;
     const uid = req.uid;
-    let imageFile = req.files;
+    // let imageFile = req.files;
     const pool = await getConnection();
     const { recordset } = await pool
       .request()
       .input("name", sql.VarChar, name)
       .input("description", sql.VarChar, description)
-      .input("imageName", sql.VarChar, imageFile ? imageFile.image.name : null)
+      .input("imageName", sql.VarChar, addImageResult.imageName)
+      .input("imageUrl", sql.VarChar, addImageResult.imageUrl)
       .input("userId", sql.Int, uid)
       .input("exerciseIds", sql.VarChar, exerciseIds)
       .query(queries.addWorkout);
 
-    if (recordset[0].status == 201) {
-      if (imageFile)
-        imageFile.image.mv(
-          `../frontend-workouts-app/public/img/workouts/${imageFile.image.name}`
-        );
-    } else console.log(recordset[0]);
+    if (addImageResult?.imageUrl) {
+      if (recordset[0].status !== 201) {
+        //Delete image because the workout was not saved in the database
+        deleteImage(addImageResult.imageUrl, uploadFolders.workouts);
+      } else {
+        //Image and workout saved successfully
+        return res.status(recordset[0].status).json({
+          workoutId: recordset[0].workoutId,
+          imageName: image.name,
+          imageUrl: addImageResult.imageUrl,
+        });
+      }
+    }
 
-    res.status(recordset[0].status).json(recordset[0]);
+    // recordset contains an error if something went wrong, otherwise the status code and workout id
+    return res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
-    res
+    return res
       .status(500)
       .json({ error: "An error ocurred when inserting a new workout" });
   }
@@ -77,20 +101,34 @@ const getWorkoutExercises = async (req, res) => {
 
 const updateWorkout = async (req, res) => {
   try {
+    const { name, description, exerciseIds, imageName, imageUrl } = req.body;
+    let newImageUrl = imageUrl; //contains the original image url of the exercise
+    let newImageName = imageName; //contains the original image name
+
+    //Upload image to cloudinary if there is a new image
+    const image = req.files?.newImage;
+    if (image) {
+      const uploadImageResult = await uploadImage(
+        image,
+        uploadFolders.workouts
+      );
+      if (uploadImageResult.status !== 200)
+        return res
+          .status(uploadImageResult.status)
+          .json({ error: uploadImageResult.error });
+
+      newImageUrl = uploadImageResult.imageUrl;
+      newImageName = image.name;
+    }
     const { id } = req.params;
-    const { name, description, exerciseIds, imageName } = req.body;
-    let imageFile = req.files;
     const pool = await getConnection();
     const { recordset } = await pool
       .request()
       .input("workoutId", sql.Int, id)
       .input("name", sql.VarChar, name)
       .input("description", sql.VarChar, description)
-      .input(
-        "imageName",
-        sql.VarChar,
-        imageFile ? imageFile.image.name : imageName
-      )
+      .input("imageName", sql.VarChar, newImageName)
+      .input("imageUrl", sql.VarChar, newImageUrl)
       .input(
         "exerciseIds",
         sql.VarChar,
@@ -98,21 +136,27 @@ const updateWorkout = async (req, res) => {
       )
       .query(queries.updateWorkout);
 
-    if (recordset[0].status == 200) {
-      if (imageFile) {
-        if (imageName)
-          //Delete previous image (if exists)
-          fs.unlinkSync(
-            `../frontend-workouts-app/public/img/workouts/${imageName}`
-          );
-        //Add new image
-        imageFile.image.mv(
-          `../frontend-workouts-app/public/img/workouts/${imageFile.image.name}`
-        );
-      }
-    } else console.log(recordset[0]);
+    if (image) {
+      // Check if the workout was updated
+      if (recordset[0].status === 200) {
+        //Validate that there is an original image to delete
+        if (imageUrl) {
+          // The exercise was updated successfully, we can proceed to delete the original image
+          deleteImage(imageUrl, uploadFolders.workouts);
+          return res
+            .status(recordset[0].status)
+            .json({ imageUrl: newImageUrl, imageName: newImageName });
+        }
+      } else {
+        // Delete the new image uploaded because the workout was not updated in the database
+        deleteImage(newImageUrl, uploadFolders.workouts);
 
-    res.status(recordset[0].status).json(recordset[0]);
+        return res
+          .status(recordset[0].status)
+          .json({ error: recordset[0].error });
+      }
+    }
+    return res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
     res
@@ -124,22 +168,20 @@ const updateWorkout = async (req, res) => {
 const deleteWorkout = async (req, res) => {
   try {
     const { id } = req.params;
-    const { imageName } = req.body;
+    const { imageUrl } = req.body;
     const pool = await getConnection();
     const { recordset } = await pool
       .request()
       .input("workoutId", sql.Int, id)
       .query(queries.deleteWorkout);
 
-    if (recordset[0].status == 200) {
-      if (imageName)
+    if (recordset[0].status === 200) {
+      if (imageUrl)
         //Delete previous image (if exists)
-        fs.unlinkSync(
-          `../frontend-workouts-app/public/img/workouts/${imageName}`
-        );
+        deleteImage(imageUrl, uploadFolders.workouts);
     } else console.log(recordset);
 
-    res.status(recordset[0].status).json(recordset[0]);
+    return res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
     console.log(error);
     res
