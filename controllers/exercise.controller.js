@@ -32,12 +32,12 @@ const getExercisesById = async (req, res) => {
 const addExercise = async (req, res) => {
   try {
     //Upload image to cloudinary
-    const imageResult = await uploadImage(
+    const addImageResult = await uploadImage(
       req.files.image,
       uploadFolders.exercises
     );
 
-    if (imageResult.status === 200) {
+    if (addImageResult.status === 200) {
       //Add exercise to the database
       const { name, description, muscleId } = req.body;
       const uid = req.uid;
@@ -47,30 +47,25 @@ const addExercise = async (req, res) => {
         .input("name", sql.VarChar, name)
         .input("description", sql.VarChar, description)
         .input("imageName", sql.VarChar, req.files.image.name)
-        .input("imageUrl", sql.VarChar, imageResult.imageUrl)
+        .input("imageUrl", sql.VarChar, addImageResult.imageUrl)
         .input("muscleId", sql.Int, muscleId)
         .input("userId", sql.Int, uid)
         .query(queries.addExercise);
 
-      if (recordset[0].status !== 201) {
+      if (recordset[0].status !== 201 && addImageResult.status === 200) {
         //Delete image because the exercise was not inserted in the database
-        const deleteImageResult = await deleteImage(
-          imageResult.imageUrl,
-          uploadFolders.exercises
-        );
-        if (deleteImageResult.status !== 200)
-          console.log(deleteImageResult.error);
+        deleteImage(addImageResult.imageUrl, uploadFolders.exercises);
       }
 
-      return res
-        .status(recordset[0].status)
-        .json({
-          ...recordset[0],
-          imageUrl: imageResult.imageUrl,
-          imageName: req.files.image.name,
-        });
+      return res.status(recordset[0].status).json({
+        ...recordset[0],
+        imageUrl: addImageResult.imageUrl,
+        imageName: req.files.image.name,
+      });
     }
-    return res.status(imageResult.status).json({ error: imageResult.error });
+    return res
+      .status(addImageResult.status)
+      .json({ error: addImageResult.error });
   } catch (error) {
     console.log(error);
     return res
@@ -84,14 +79,12 @@ const updateExercise = async (req, res) => {
     const { name, description, imageName, imageUrl, muscleId } = req.body;
     let newImageUrl = imageUrl; //contains the original image url of the exercise
     let newImageName = imageName; //contains the original image name
+    let uploadImageResult;
 
     const image = req.files?.newImage;
     //There is a new image to update
     if (image) {
-      const uploadImageResult = await uploadImage(
-        image,
-        uploadFolders.exercises
-      );
+      uploadImageResult = await uploadImage(image, uploadFolders.exercises);
       if (uploadImageResult.status !== 200)
         return res
           .status(uploadImageResult.status)
@@ -119,23 +112,17 @@ const updateExercise = async (req, res) => {
       //Check if the exercise was updated
       if (recordset[0].status === 200) {
         // The exercise was updated successfully, we can proceed to delete the original image
-        const deleteImageResult = await deleteImage(
-          imageUrl,
-          uploadFolders.exercises
-        );
-        if (deleteImageResult.status !== 200)
-          console.log(deleteImageResult.error);
+        deleteImage(imageUrl, uploadFolders.exercises);
+
         return res
           .status(recordset[0].status)
           .json({ imageUrl: newImageUrl, imageName: newImageName });
       } else {
-        // Delete the new image uploaded because the exercise was not updated in the database
-        const deleteImageResult = await deleteImage(
-          newImageUrl,
-          uploadFolders.exercises
-        );
-        if (deleteImageResult.status !== 200)
-          console.log(deleteImageResult.error);
+        if (uploadImage?.status === 200) {
+          // Delete the new image uploaded because the exercise was not updated in the database
+          deleteImage(newImageUrl, uploadFolders.exercises);
+        }
+
         return res
           .status(recordset[0].status)
           .json({ error: recordset[0].error });
@@ -163,12 +150,7 @@ const deleteExercise = async (req, res) => {
       .query(queries.deleteExercise);
 
     if (recordset[0].status === 200) {
-      const deleteImageResult = await deleteImage(
-        imageUrl,
-        uploadFolders.exercises
-      );
-      if (deleteImageResult.status !== 200)
-        console.log(deleteImageResult.error);
+      deleteImage(imageUrl, uploadFolders.exercises);
     }
     return res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {
