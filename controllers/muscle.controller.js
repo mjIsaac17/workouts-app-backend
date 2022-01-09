@@ -5,6 +5,7 @@ const {
   uploadImage,
   uploadFolders,
   deleteImage,
+  deleteImages,
 } = require("../helpers/imageManager");
 
 const getMuscles = async (req, res) => {
@@ -139,7 +140,14 @@ const deleteMuscle = async (req, res) => {
       .query(queries.deleteMuscle);
 
     if (recordset[0].status === 200) {
+      //Delete muscle image
       deleteImage(imageUrl, uploadFolders.muscles);
+      //Check if it is needed to delete the exercises
+      if (recordset[0].imageUrls) {
+        deleteImages(recordset[0].imageUrls, "||", uploadFolders.exercises);
+        //delete the urls to avoid returning this data, it is unnecessary in the frontend
+        delete recordset[0].imageUrls;
+      }
     }
     return res.status(recordset[0].status).json(recordset[0]);
   } catch (error) {

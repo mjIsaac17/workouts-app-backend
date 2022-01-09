@@ -48,8 +48,14 @@ const deleteImage = async (imageUrl, folder = "") => {
   }
 };
 
+const deleteImages = async (imageUrls, separator = "||", folder) => {
+  const arrImageUrls = imageUrls.split(separator);
+  arrImageUrls.forEach((imageUrl) => deleteImage(imageUrl, folder));
+};
+
 module.exports = {
   uploadImage,
   deleteImage,
+  deleteImages,
   uploadFolders,
 };
