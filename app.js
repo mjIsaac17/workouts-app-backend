@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(
   fileUpload({
     useTempFiles: true,
-    tempFileDir: "/tempFile/",
+    tempFileDir: "/tmp/",
   })
 );
 app.use(express.static("public"));
