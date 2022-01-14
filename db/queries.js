@@ -19,7 +19,7 @@ const queries = {
   addExercise:
     "usp_Add_Exercise @name, @description, @imageName, @imageUrl, @muscleNames, @userId",
   updateExercise:
-    "usp_Update_Exercise @id, @name, @description, @imageName, @imageUrl, @muscleId, @userId",
+    "usp_Update_Exercise @id, @name, @description, @imageName, @imageUrl, @updateMuscles, @muscleNames, @userId",
   deleteExercise: "usp_Delete_Exercise @exerciseId, @userId",
 
   //Workout

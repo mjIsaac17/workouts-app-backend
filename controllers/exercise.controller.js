@@ -76,7 +76,14 @@ const addExercise = async (req, res) => {
 
 const updateExercise = async (req, res) => {
   try {
-    const { name, description, imageName, imageUrl, muscleId } = req.body;
+    const {
+      name,
+      description,
+      imageName,
+      imageUrl,
+      updateMuscles,
+      muscleNames,
+    } = req.body;
     let newImageUrl = imageUrl; //contains the original image url of the exercise
     let newImageName = imageName; //contains the original image name
     let uploadImageResult;
@@ -104,7 +111,8 @@ const updateExercise = async (req, res) => {
       .input("description", sql.VarChar, description)
       .input("imageName", sql.VarChar, newImageName)
       .input("imageUrl", sql.VarChar, newImageUrl)
-      .input("muscleId", sql.Int, muscleId)
+      .input("updateMuscles", sql.Bit, updateMuscles === "true") // formData parses data to string
+      .input("muscleNames", sql.VarChar, muscleNames)
       .input("userId", sql.Int, uid)
       .query(queries.updateExercise);
 
@@ -122,7 +130,6 @@ const updateExercise = async (req, res) => {
           // Delete the new image uploaded because the exercise was not updated in the database
           deleteImage(newImageUrl, uploadFolders.exercises);
         }
-
         return res
           .status(recordset[0].status)
           .json({ error: recordset[0].error });
