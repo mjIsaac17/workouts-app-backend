@@ -39,7 +39,7 @@ const addExercise = async (req, res) => {
 
     if (addImageResult.status === 200) {
       //Add exercise to the database
-      const { name, description, muscleId } = req.body;
+      const { name, description, muscleNames } = req.body;
       const uid = req.uid;
       const pool = await getConnection();
       const { recordset } = await pool
@@ -48,7 +48,7 @@ const addExercise = async (req, res) => {
         .input("description", sql.VarChar, description)
         .input("imageName", sql.VarChar, req.files.image.name)
         .input("imageUrl", sql.VarChar, addImageResult.imageUrl)
-        .input("muscleId", sql.Int, muscleId)
+        .input("muscleNames", sql.VarChar, muscleNames)
         .input("userId", sql.Int, uid)
         .query(queries.addExercise);
 
