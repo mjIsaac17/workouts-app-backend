@@ -30,9 +30,10 @@ const getExercisesById = async (req, res) => {
  * exerciseId: 1 (when there are no errors)
  */
 const addExercise = async (req, res) => {
+  let addImageResult;
   try {
     //Upload image to cloudinary
-    const addImageResult = await uploadImage(
+    addImageResult = await uploadImage(
       req.files.image,
       uploadFolders.exercises
     );
@@ -68,9 +69,33 @@ const addExercise = async (req, res) => {
       .json({ error: addImageResult.error });
   } catch (error) {
     console.log(error);
+    if (addImageResult?.status === 200)
+      deleteImage(addImageResult.imageUrl, uploadFolders.exercises);
     return res
       .status(500)
       .json({ error: "An error ocurred when inserting a new exercise" });
+  }
+};
+
+const addExistingExercise = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { muscleId } = req.body;
+    const uid = req.uid;
+    const pool = await getConnection();
+    const { recordset } = await pool
+      .request()
+      .input("exerciseId", sql.Int, id)
+      .input("muscleId", sql.VarChar, muscleId)
+      .input("userId", sql.Int, uid)
+      .query(queries.addExistingExercise);
+
+    return res.status(recordset[0].status).json(recordset[0]);
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ error: "An error ocurred when adding the exercise" });
   }
 };
 
@@ -171,6 +196,7 @@ const deleteExercise = async (req, res) => {
 module.exports = {
   getExercisesById,
   addExercise,
+  addExistingExercise,
   updateExercise,
   deleteExercise,
 };
